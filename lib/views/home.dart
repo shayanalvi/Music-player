@@ -36,7 +36,7 @@ class Home extends StatelessWidget {
               // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                tileColor: bgColor,
+                tileColor: whiteColor,
                 title: Text(
                   "Music Player",
                   style: TextStyle(
