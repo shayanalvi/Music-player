@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:music_app/consts/colors.dart';
 import 'package:music_app/consts/text_styles.dart';
+import 'package:music_app/controllers/player_controller.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    var controller = Get.put(PlayerController());
     return Scaffold(
       backgroundColor: bgDarkColor,
       appBar: AppBar(
@@ -26,7 +31,25 @@ class Home extends StatelessWidget {
           ),
         ),
       ),
-      body: Padding(
+      body: FutureBuilder<List<SongModel>>(
+        future: controller.audioQuery.querySongs(
+          ignoreCase: true,
+          orderType: OrderType.ASC_OR_SMALLER,
+          sortType: null,
+          uriType: UriType.EXTERNAL,
+        ),
+      
+       builder:(BuildContext context, snapshot)
+       {
+        if (snapshot.data == null){
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        else if (snapshot.data!.isEmpty){
+          return Center(child: Text("No song found", style: ourStyle(),));
+        }
+        else return  Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView.builder(
           physics: const BouncingScrollPhysics(),
@@ -36,7 +59,7 @@ class Home extends StatelessWidget {
               // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                tileColor: whiteColor,
+                tileColor: bgColor,
                 title: Text(
                   "Music Player",
                   style: TextStyle(
@@ -59,7 +82,8 @@ class Home extends StatelessWidget {
           },
           itemCount: 100,
         ),
-      ),
+      );
+       })
     );
   }
 }
