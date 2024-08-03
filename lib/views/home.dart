@@ -10,80 +10,89 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     var controller = Get.put(PlayerController());
     return Scaffold(
-      backgroundColor: bgDarkColor,
-      appBar: AppBar(
         backgroundColor: bgDarkColor,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.search, color: whiteColor),
+        appBar: AppBar(
+          backgroundColor: bgDarkColor,
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.search, color: whiteColor),
+            ),
+          ],
+          leading: Icon(Icons.sort_rounded, color: whiteColor),
+          title: Text(
+            "Beats",
+            style: ourStyle(
+              family: bold,
+              size: 18,
+            ),
           ),
-        ],
-        leading: Icon(Icons.sort_rounded, color: whiteColor),
-        title: Text(
-          "Beats",
-          style: ourStyle(
-            family: bold,
-            size: 18,
-          ),
         ),
-      ),
-      body: FutureBuilder<List<SongModel>>(
-        future: controller.audioQuery.querySongs(
-          ignoreCase: true,
-          orderType: OrderType.ASC_OR_SMALLER,
-          sortType: null,
-          uriType: UriType.EXTERNAL,
-        ),
-      
-       builder:(BuildContext context, snapshot)
-       {
-        if (snapshot.data == null){
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        else if (snapshot.data!.isEmpty){
-          return Center(child: Text("No song found", style: ourStyle(),));
-        }
-        else return  Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              margin: EdgeInsets.only(bottom: 4),
-              // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-              child: ListTile(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                tileColor: bgColor,
-                title: Text(
-                  "Music Player",
-                  style: TextStyle(
-                    fontFamily: bold,
-                    fontSize: 15,
-                    color: whiteColor,
-                  ),
+        body: FutureBuilder<List<SongModel>>(
+            future: controller.audioQuery.querySongs(
+              ignoreCase: true,
+              orderType: OrderType.ASC_OR_SMALLER,
+              sortType: null,
+              uriType: UriType.EXTERNAL,
+            ),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.data == null) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.data!.isEmpty) {
+                print(snapshot.data);
+
+                return Center(
+                    child: Text(
+                  "No song found",
+                  style: ourStyle(),
+                ));
+              } else
+                print(snapshot.data);
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 4),
+                      // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        tileColor: bgColor,
+                        title: Text(
+                          snapshot.data![index].displayNameWOExt,
+                          style: TextStyle(
+                            fontFamily: bold,
+                            fontSize: 15,
+                            color: whiteColor,
+                          ),
+                        ),
+                        subtitle: Text(
+                          "${snapshot.data![index].artist}",
+                          style: TextStyle(
+                            fontFamily: regular,
+                            fontSize: 12,
+                          ),
+                        ),
+                        leading: QueryArtworkWidget(
+                          id: snapshot.data![index].id,
+                          type: ArtworkType.AUDIO,
+                          nullArtworkWidget: const Icon(Icons.music_note,
+                              color: whiteColor, size: 32),
+                        ),
+                        trailing:
+                            Icon(Icons.play_arrow, color: whiteColor, size: 36),
+                      ),
+                    );
+                  },
+                  itemCount: snapshot.data!.length,
                 ),
-                subtitle: Text(
-                  "Artist name",
-                  style: TextStyle(
-                    fontFamily: regular,
-                    fontSize: 12,
-                  ),
-                ),
-                leading: Icon(Icons.music_note, color: whiteColor, size: 32),
-                trailing: Icon(Icons.play_arrow, color: whiteColor, size: 36),
-              ),
-            );
-          },
-          itemCount: 100,
-        ),
-      );
-       })
-    );
+              );
+            }));
   }
 }
