@@ -60,33 +60,45 @@ class Home extends StatelessWidget {
                     return Container(
                       margin: EdgeInsets.only(bottom: 4),
                       // decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                      child: ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                        tileColor: bgColor,
-                        title: Text(
-                          snapshot.data![index].displayNameWOExt,
-                          style: TextStyle(
-                            fontFamily: bold,
-                            fontSize: 15,
-                            color: whiteColor,
+                      child: Obx(
+                        () => ListTile(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
+                          tileColor: bgColor,
+                          title: Text(
+                            snapshot.data![index].displayNameWOExt,
+                            style: TextStyle(
+                              fontFamily: bold,
+                              fontSize: 15,
+                              color: whiteColor,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          "${snapshot.data![index].artist}",
-                          style: TextStyle(
-                            fontFamily: regular,
-                            fontSize: 12,
+                          subtitle: Text(
+                            "${snapshot.data![index].artist}",
+                            style: TextStyle(
+                              fontFamily: regular,
+                              fontSize: 12,
+                            ),
                           ),
+                          leading: QueryArtworkWidget(
+                            id: snapshot.data![index].id,
+                            type: ArtworkType.AUDIO,
+                            nullArtworkWidget: const Icon(Icons.music_note,
+                                color: whiteColor, size: 32),
+                          ),
+                          trailing: controller.playerIndex.value == index &&
+                                  controller.isPlaying.value
+                              ? const Icon(
+                                  Icons.play_arrow,
+                                  color: whiteColor,
+                                  size: 36,
+                                )
+                              : null,
+                          onTap: () {
+                            controller.playSong(
+                                snapshot.data![index].uri, index);
+                          },
                         ),
-                        leading: QueryArtworkWidget(
-                          id: snapshot.data![index].id,
-                          type: ArtworkType.AUDIO,
-                          nullArtworkWidget: const Icon(Icons.music_note,
-                              color: whiteColor, size: 32),
-                        ),
-                        trailing:
-                            Icon(Icons.play_arrow, color: whiteColor, size: 36),
                       ),
                     );
                   },
